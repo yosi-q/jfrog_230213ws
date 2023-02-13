@@ -71,3 +71,57 @@ $ jf pip install jfrogsample-hello
 $ pip show jfrogsample-hello
 $ python -m hello
 ```
+
+
+# Hello Docker
+
+## 利用確認
+
+```
+$ docker --version
+```
+Docker Desktopが入っている
+
+```
+$ jf --version
+```
+JFrog CLIが入っている https://jfrog.com/ja/getcli/
+
+## Development Flow with JFrog
+
+### リポジトリ作成後のCLI設定
+```
+$ jf c add
+$ jf c show
+$ jf c use $SERVER_ID
+```
+
+### Artifactoryにログイン
+```
+$ docker login $INSTANCE.jfrog.io/$DOCKER_REGISTRY/
+```
+
+### Docker pull
+```
+$ jf docker pull python:$PYTHON_VERSION-slim
+```
+
+### Docker ビルド
+```
+$ docker build \
+    --build-arg JFROG_USER=$USER \
+    --build-arg JFROG_TOKEN=$TOKEN \
+    --build-arg JFROG_INSTANCE=$INSTANCE \
+    -t $INSTANCE.jfrog.io/$DOCKER_REGISTRY/app:latest .
+```
+
+### Docker push
+```
+$ jf docker push $INSTANCE.jfrog.io/$DOCKER_REGISTRY/app:latest --build-name=sample-docker-build --build-number=1
+
+```
+
+### Build Infoの登録 - ビルドの登録
+```
+jf rt bp sample-docker-build 1
+```
